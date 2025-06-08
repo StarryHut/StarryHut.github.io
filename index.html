@@ -1,484 +1,574 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampEcho校映</title>
-    <style>
-        /* 全局样式 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f3f4f6;
-            color: #333;
-        }
-
-        /* 导航栏样式 */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #fff;
-            color: #333;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            animation: slideDown 0.5s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-            }
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        nav .brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #1da1f2;
-        }
-
-        nav .nav-links {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-grow: 1;
-        }
-
-        nav .nav-links a {
-            color: #333;
-            text-decoration: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        nav .nav-links a:hover {
-            background-color: #e6f7ff;
-            color: #1da1f2;
-        }
-
-        nav .search-box {
-            display: flex;
-            align-items: center;
-            background-color: #f3f4f6;
-            border-radius: 5px;
-            padding: 5px 10px;
-        }
-
-        nav .search-box input {
-            border: none;
-            background: none;
-            outline: none;
-            margin-left: 5px;
-        }
-
-        nav .auth-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        nav .auth-buttons button {
-            background-color: #1da1f2;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        nav .auth-buttons button:hover {
-            background-color: #0d8bd9;
-        }
-
-        nav .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        nav .user-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: #ccc;
-        }
-
-        /* 主内容容器样式 */
-       .main-container {
-            display: flex;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 80px auto 20px;
-            padding: 0 20px;
-        }
-
-       .topic-list {
-            width: 20%;
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-       .topic-list h3 {
-            margin-bottom: 10px;
-        }
-
-       .topic-list ul {
-            list-style-type: none;
-        }
-
-       .topic-list li {
-            margin-bottom: 5px;
-        }
-
-       .post-container {
-            width: 60%;
-        }
-
-       .post-container h2 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        /* 发帖表单样式 */
-        #createPostForm {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        #createPostForm textarea {
-            flex: 1;
-            margin-right: 10px;
-            padding: 10px;
-            border: 1px solid #e1e8ed;
-            border-radius: 5px;
-            transition: border-color 0.3s ease;
-        }
-
-        #createPostForm textarea:focus {
-            border-color: #1da1f2;
-            outline: none;
-        }
-
-        /* 发帖按钮的 SVG 图标样式 */
-        #createPostForm button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        #createPostForm button:hover {
-            transform: scale(1.1);
-        }
-
-        /* 帖子列表样式 */
-       .post {
-            background-color: white;
-            border: 1px solid #e1e8ed;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 15px;
-            animation: fadeIn 0.5s ease;
-            transition: box-shadow 0.3s ease;
-        }
-
-       .post:hover {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-       .post-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-       .post-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #ccc;
-            margin-right: 10px;
-        }
-
-       .post-username {
-            font-weight: bold;
-            color: #333;
-        }
-
-       .post-time {
-            color: #657786;
-            font-size: 12px;
-            margin-left: 10px;
-        }
-
-       .post-content {
-            margin-bottom: 10px;
-        }
-
-       .post-actions {
-            display: flex;
-            justify-content: flex-end;
-        }
-
-       .post-actions svg {
-            width: 20px;
-            height: 20px;
-            margin-left: 10px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-       .post-actions svg:hover {
-            transform: scale(1.2);
-        }
-
-       .hot-list {
-            width: 20%;
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-       .hot-list h3 {
-            margin-bottom: 10px;
-        }
-
-       .hot-list ul {
-            list-style-type: none;
-        }
-
-       .hot-list li {
-            margin-bottom: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>校园社区 - 首页</title>
+  <!-- 引入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入 Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2E7D32', // 墨绿色主色调
+            secondary: '#4CAF50', // 浅绿色辅助色
+            accent: '#81C784', // 淡绿色强调色
+            neutral: '#263238', // 深灰色文本
+            'neutral-light': '#607D8B', // 浅灰色文本
+            'neutral-lighter': '#ECEFF1', // 极浅灰色背景
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .nav-item-active {
+        border-bottom: 3px solid #2E7D32;
+        color: #2E7D32;
+        font-weight: 600;
+      }
+      .nav-item-hover {
+        transition: all 0.2s ease;
+      }
+      .nav-item-hover:hover {
+        color: #2E7D32;
+        background-color: rgba(46, 125, 50, 0.05);
+        transform: translateY(-2px);
+      }
+      .btn-primary {
+        @apply bg-primary text-white px-4 py-2 rounded-lg font-medium transition-all duration-200;
+      }
+      .btn-primary:hover {
+        @apply bg-primary/90 shadow-md transform -translate-y-0.5;
+      }
+      .btn-secondary {
+        @apply bg-white border border-primary text-primary px-4 py-2 rounded-lg font-medium transition-all duration-200;
+      }
+      .btn-secondary:hover {
+        @apply bg-primary/5 shadow-md transform -translate-y-0.5;
+      }
+      .btn-icon {
+        @apply w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200;
+      }
+      .btn-icon:hover {
+        @apply bg-primary/10 transform -translate-y-0.5;
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(46, 125, 50, 0.12);
+      }
+    }
+  </style>
 </head>
-
-<body>
-    <nav>
-        <div class="brand">CampEcho校映</div>
-        <div class="nav-links">
-            <a href="/">公共频道</a>
-            <a href="/campus">校园频道</a>
+<body class="bg-gray-50 font-inter text-neutral">
+  <!-- 顶部导航栏 -->
+  <header class="sticky top-0 bg-white shadow-md z-50">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo区域 -->
+        <div class="flex items-center">
+          <i class="fa fa-graduation-cap text-2xl text-primary mr-2"></i>
+          <span class="font-bold text-xl">CampusHub</span>
         </div>
-        <div class="search-box">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <input type="text" placeholder="搜索">
+        
+        <!-- 导航菜单 - 居中显示公共频道和校内频道 -->
+        <div class="hidden md:flex items-center space-x-1">
+          <button class="nav-item-active nav-item-hover px-6 py-4 font-medium">
+            <i class="fa fa-globe mr-1"></i> 公共频道
+          </button>
+          <button class="nav-item-hover px-6 py-4 font-medium text-neutral-light">
+            <i class="fa fa-university mr-1"></i> 校内频道
+          </button>
         </div>
-        <div class="auth-buttons" id="authButtons"></div>
-    </nav>
-    <div class="main-container">
-        <div class="topic-list">
-            <h3>话题列表</h3>
-            <ul>
-                <li>话题1</li>
-                <li>话题2</li>
-                <li>话题3</li>
-            </ul>
+        
+        <!-- 用户区域 -->
+        <div class="flex items-center space-x-1">
+          <!-- 搜索框 -->
+          <div class="hidden md:flex items-center bg-neutral-lighter rounded-full px-3 py-1 mx-2">
+            <i class="fa fa-search text-neutral-light mr-2"></i>
+            <input type="text" placeholder="搜索校园活动..." class="bg-transparent border-none focus:outline-none w-full text-sm">
+          </div>
+          
+          <!-- 通知按钮 -->
+          <button class="btn-icon">
+            <i class="fa fa-bell-o text-neutral-light"></i>
+            <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+          
+          <!-- 消息按钮 -->
+          <button class="btn-icon">
+            <i class="fa fa-comment-o text-neutral-light"></i>
+          </button>
+          
+          <!-- 用户头像 -->
+          <div class="relative">
+            <button class="flex items-center space-x-2">
+              <img src="https://picsum.photos/id/64/40/40" alt="用户头像" class="w-8 h-8 rounded-full object-cover border-2 border-primary">
+              <span class="hidden md:inline-block font-medium">王小明</span>
+              <i class="fa fa-angle-down text-neutral-light"></i>
+            </button>
+          </div>
+          
+          <!-- 移动端菜单按钮 -->
+          <button class="btn-icon md:hidden">
+            <i class="fa fa-bars text-neutral-light"></i>
+          </button>
         </div>
-        <div class="post-container">
-            <h2>Posts</h2>
-            <form id="createPostForm">
-                <textarea id="postContent" placeholder="What's happening?" required></textarea>
-                <button type="submit">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M2 2L22 12L2 22V2ZM4 4L20 12L4 20V4ZM6 6L18 12L6 18V6ZM8 8L16 12L8 16V8Z"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </button>
-            </form>
-            <div id="postList"></div>
-        </div>
-        <div class="hot-list">
-            <h3>热搜列表</h3>
-            <ul>
-                <li>热搜1</li>
-                <li>热搜2</li>
-                <li>热搜3</li>
-            </ul>
-        </div>
+      </div>
     </div>
-    <script>
-        let username;
-        let user_id;
-
-        async function checkUserLogin() {
-            try {
-                const response = await fetch('/api/user/userinfo');
-                const user = await response.json();
-                const islogin = user.islogin;
-
-                const authButtons = document.getElementById('authButtons');
-                if (!islogin) {
-                    const loginButton = document.createElement('button');
-                    loginButton.textContent = '登录';
-                    loginButton.addEventListener('click', () => {
-                        window.location.href = '/login';
-                    });
-                    const registerButton = document.createElement('button');
-                    registerButton.textContent = '注册';
-                    registerButton.addEventListener('click', () => {
-                        window.location.href = '/register';
-                    });
-                    authButtons.appendChild(loginButton);
-                    authButtons.appendChild(registerButton);
-                } else {
-                    username = user.username;
-                    user_id = user.user_id;
-                    const userInfoDiv = document.createElement('div');
-                    userInfoDiv.classList.add('user-info');
-                    const userAvatar = document.createElement('div');
-                    userAvatar.classList.add('user-avatar');
-                    const userNameSpan = document.createElement('span');
-                    userNameSpan.textContent = username;
-                    userInfoDiv.appendChild(userAvatar);
-                    userInfoDiv.appendChild(userNameSpan);
-                    authButtons.appendChild(userInfoDiv);
-                }
-            } catch (error) {
-                console.error('Error checking user login:', error);
-            }
-        }
-
-        async function fetchPosts() {
-            const response = await fetch('/api/post');
-            const posts = await response.json();
-            const postList = document.getElementById('postList');
-            postList.innerHTML = '';
-            posts.forEach(post => {
-                const postDiv = document.createElement('div');
-                postDiv.classList.add('post');
-                postDiv.innerHTML = `
-                    <div class="post-header">
-                        <div class="post-avatar"></div>
-                        <span class="post-username">${post.username}</span>
-                        <span class="post-time">${post.created_at}</span>
+  </header>
+  
+  <!-- 主内容区 -->
+  <main class="container mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- 左侧边栏 -->
+      <div class="lg:w-1/5 space-y-4">
+        <!-- 用户卡片 -->
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <div class="flex items-center">
+            <img src="https://picsum.photos/id/64/60/60" alt="用户头像" class="w-12 h-12 rounded-full object-cover mr-3">
+            <div>
+              <div class="font-bold">王小明</div>
+              <div class="text-xs text-neutral-light">计算机科学系</div>
+            </div>
+          </div>
+          <div class="flex justify-between mt-3 text-sm">
+            <div class="text-center">
+              <div class="font-medium">124</div>
+              <div class="text-xs text-neutral-light">动态</div>
+            </div>
+            <div class="text-center">
+              <div class="font-medium">328</div>
+              <div class="text-xs text-neutral-light">粉丝</div>
+            </div>
+            <div class="text-center">
+              <div class="font-medium">156</div>
+              <div class="text-xs text-neutral-light">关注</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 快捷导航 -->
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h3 class="font-bold mb-3">快捷导航</h3>
+          <ul class="space-y-2">
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <i class="fa fa-home text-primary mr-3"></i>
+                <span>首页</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <i class="fa fa-users text-primary mr-3"></i>
+                <span>好友</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <i class="fa fa-calendar-check-o text-primary mr-3"></i>
+                <span>活动</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <i class="fa fa-bookmark text-primary mr-3"></i>
+                <span>收藏</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <i class="fa fa-map-marker text-primary mr-3"></i>
+                <span>校园地图</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <i class="fa fa-cog text-primary mr-3"></i>
+                <span>设置</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- 热门社团 -->
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h3 class="font-bold mb-3">热门社团</h3>
+          <ul class="space-y-3">
+            <li class="flex items-center">
+              <img src="https://picsum.photos/id/200/40/40" alt="社团图标" class="w-8 h-8 rounded-full object-cover mr-3">
+              <div class="flex-1">
+                <div class="font-medium text-sm">计算机协会</div>
+                <div class="text-xs text-neutral-light">326名成员</div>
+              </div>
+              <button class="btn-secondary text-xs px-2 py-1">
+                加入
+              </button>
+            </li>
+            <li class="flex items-center">
+              <img src="https://picsum.photos/id/201/40/40" alt="社团图标" class="w-8 h-8 rounded-full object-cover mr-3">
+              <div class="flex-1">
+                <div class="font-medium text-sm">摄影协会</div>
+                <div class="text-xs text-neutral-light">189名成员</div>
+              </div>
+              <button class="btn-secondary text-xs px-2 py-1">
+                加入
+              </button>
+            </li>
+            <li class="flex items-center">
+              <img src="https://picsum.photos/id/202/40/40" alt="社团图标" class="w-8 h-8 rounded-full object-cover mr-3">
+              <div class="flex-1">
+                <div class="font-medium text-sm">舞蹈协会</div>
+                <div class="text-xs text-neutral-light">215名成员</div>
+              </div>
+              <button class="btn-secondary text-xs px-2 py-1">
+                加入
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- 中间内容区 -->
+      <div class="lg:w-3/5 space-y-6">
+        <!-- 发布动态框 -->
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <div class="flex items-center">
+            <img src="https://picsum.photos/id/64/40/40" alt="用户头像" class="w-10 h-10 rounded-full object-cover mr-3">
+            <input type="text" placeholder="分享你的校园生活..." class="flex-1 bg-neutral-lighter rounded-full px-4 py-2 text-sm focus:outline-none border border-gray-200">
+          </div>
+          <div class="flex justify-between mt-3 pt-3 border-t">
+            <button class="flex items-center text-sm text-neutral-light hover:text-primary transition-colors">
+              <i class="fa fa-image text-secondary mr-1"></i> 图片
+            </button>
+            <button class="flex items-center text-sm text-neutral-light hover:text-primary transition-colors">
+              <i class="fa fa-video-camera text-danger mr-1"></i> 视频
+            </button>
+            <button class="flex items-center text-sm text-neutral-light hover:text-primary transition-colors">
+              <i class="fa fa-smile-o text-accent mr-1"></i> 心情
+            </button>
+          </div>
+        </div>
+        
+        <!-- 动态内容 -->
+        <div class="space-y-6">
+          <!-- 动态1 -->
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover">
+            <div class="p-4 flex items-center">
+              <img src="https://picsum.photos/id/237/40/40" alt="发布者头像" class="w-10 h-10 rounded-full object-cover mr-3">
+              <div>
+                <div class="font-medium">李明</div>
+                <div class="text-xs text-neutral-light">2小时前 · 计算机科学系</div>
+              </div>
+              <button class="ml-auto text-neutral-light">
+                <i class="fa fa-ellipsis-h"></i>
+              </button>
+            </div>
+            <div class="p-4">
+              <p>今天参加了ACM程序设计大赛，我们团队获得了二等奖！感谢队友们的努力，也感谢老师的指导！🎉</p>
+            </div>
+            <div>
+              <img src="https://picsum.photos/id/1/800/500" alt="动态图片" class="w-full h-auto">
+            </div>
+            <div class="p-4 flex justify-between text-neutral-light">
+              <div class="flex items-center">
+                <button class="flex items-center mr-4">
+                  <i class="fa fa-thumbs-up mr-1"></i> 86
+                </button>
+                <button class="flex items-center">
+                  <i class="fa fa-comment-o mr-1"></i> 12
+                </button>
+              </div>
+              <button>
+                <i class="fa fa-share"></i>
+              </button>
+            </div>
+            <div class="px-4 pb-4">
+              <div class="bg-neutral-lighter rounded-lg p-3 mb-3">
+                <div class="flex items-start">
+                  <img src="https://picsum.photos/id/238/30/30" alt="评论者头像" class="w-6 h-6 rounded-full object-cover mr-2">
+                  <div class="flex-1">
+                    <div class="flex items-center">
+                      <span class="font-medium text-sm">张雪</span>
+                      <span class="text-xs text-neutral-light ml-2">1小时前</span>
                     </div>
-                    <div class="post-content">${post.content}</div>
-                    <div class="post-actions">
-                    </div>
-                `;
-                const postActions = postDiv.querySelector('.post-actions');
-                if (post.username == username) {
-                    const editSvg = document.createElement('svg');
-                    editSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-                    editSvg.setAttribute('viewBox', '0 0 512 512');
-                    editSvg.setAttribute('onclick', `editPost(${post.id})`);
-                    editSvg.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
-                        </svg>
-                    `;
-                    postActions.appendChild(editSvg);
-
-                    const deleteSvg = document.createElement('svg');
-                    deleteSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-                    deleteSvg.setAttribute('viewBox', '0 0 512 512');
-                    deleteSvg.setAttribute('onclick', `deletePost(${post.id})`);
-                    deleteSvg.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
-                        </svg>
-                    `;
-                    postActions.appendChild(deleteSvg);
-                }
-                postList.appendChild(postDiv);
-            });
-        }
-
-        async function createPost() {
-            const postContent = document.getElementById('postContent').value;
-            const response = await fetch('/api/post', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    content: postContent
-                })
-            });
-            const data = await response.json();
-            if (response.ok) {
-                alert(data.message);
-                fetchPosts();
-                document.getElementById('postContent').value = '';
-            } else {
-                alert(data.message);
-            }
-        }
-
-        async function editPost(postId) {
-            const newContent = prompt('Enter new post content:');
-            if (newContent) {
-                const response = await fetch(`/api/post/${postId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        content: newContent
-                    })
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    alert(data.message);
-                    fetchPosts();
-                } else {
-                    alert(data.message);
-                }
-            }
-        }
-
-        async function deletePost(postId) {
-            const confirmDelete = confirm('Are you sure you want to delete this post?');
-            if (confirmDelete) {
-                const response = await fetch(`/api/post/${postId}`, {
-                    method: 'DELETE'
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    alert(data.message);
-                    fetchPosts();
-                } else {
-                    alert(data.message);
-                }
-            }
-        }
-
-        checkUserLogin()
-        fetchPosts();
-        const createPostForm = document.getElementById('createPostForm');
-        createPostForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            createPost();
+                    <p class="text-sm mt-1">恭喜恭喜！你们团队太厉害了！</p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <img src="https://picsum.photos/id/64/30/30" alt="用户头像" class="w-6 h-6 rounded-full object-cover mr-2">
+                <input type="text" placeholder="发表评论..." class="flex-1 bg-neutral-lighter rounded-full px-3 py-1 text-xs focus:outline-none">
+              </div>
+            </div>
+          </div>
+          
+          <!-- 动态2 -->
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover">
+            <div class="p-4 flex items-center">
+              <img src="https://picsum.photos/id/238/40/40" alt="发布者头像" class="w-10 h-10 rounded-full object-cover mr-3">
+              <div>
+                <div class="font-medium">张雪</div>
+                <div class="text-xs text-neutral-light">昨天 · 音乐学院</div>
+              </div>
+              <button class="ml-auto text-neutral-light">
+                <i class="fa fa-ellipsis-h"></i>
+              </button>
+            </div>
+            <div class="p-4">
+              <p>下周三晚上7点在音乐厅有一场校园音乐会，欢迎大家来欣赏！🎵</p>
+            </div>
+            <div>
+              <img src="https://picsum.photos/id/20/800/500" alt="动态图片" class="w-full h-auto">
+            </div>
+            <div class="p-4 flex justify-between text-neutral-light">
+              <div class="flex items-center">
+                <button class="flex items-center mr-4">
+                  <i class="fa fa-thumbs-up mr-1"></i> 124
+                </button>
+                <button class="flex items-center">
+                  <i class="fa fa-comment-o mr-1"></i> 23
+                </button>
+              </div>
+              <button>
+                <i class="fa fa-share"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- 动态3 -->
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover">
+            <div class="p-4 flex items-center">
+              <img src="https://picsum.photos/id/239/40/40" alt="发布者头像" class="w-10 h-10 rounded-full object-cover mr-3">
+              <div>
+                <div class="font-medium">王浩</div>
+                <div class="text-xs text-neutral-light">3天前 · 体育学院</div>
+              </div>
+              <button class="ml-auto text-neutral-light">
+                <i class="fa fa-ellipsis-h"></i>
+              </button>
+            </div>
+            <div class="p-4">
+              <p>校园篮球赛即将开始，我们体育学院代表队已经准备好了！🏀 欢迎大家来为我们加油！</p>
+            </div>
+            <div>
+              <img src="https://picsum.photos/id/42/800/500" alt="动态图片" class="w-full h-auto">
+            </div>
+            <div class="p-4 flex justify-between text-neutral-light">
+              <div class="flex items-center">
+                <button class="flex items-center mr-4">
+                  <i class="fa fa-thumbs-up mr-1"></i> 98
+                </button>
+                <button class="flex items-center">
+                  <i class="fa fa-comment-o mr-1"></i> 15
+                </button>
+              </div>
+              <button>
+                <i class="fa fa-share"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 右侧边栏 -->
+      <div class="lg:w-1/5 space-y-4">
+        <!-- 即将开始的活动 -->
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h3 class="font-bold mb-3">即将开始的活动</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start card-hover">
+              <div class="w-12 h-12 bg-primary/10 rounded-lg flex flex-col items-center justify-center text-primary mr-3">
+                <div class="font-bold">15</div>
+                <div class="text-xs">五月</div>
+              </div>
+              <div>
+                <div class="font-medium text-sm">2023年校园科技文化节</div>
+                <div class="text-xs text-neutral-light flex items-center mt-1">
+                  <i class="fa fa-map-marker mr-1"></i> 体育馆
+                </div>
+              </div>
+            </li>
+            <li class="flex items-start card-hover">
+              <div class="w-12 h-12 bg-secondary/10 rounded-lg flex flex-col items-center justify-center text-secondary mr-3">
+                <div class="font-bold">25</div>
+                <div class="text-xs">五月</div>
+              </div>
+              <div>
+                <div class="font-medium text-sm">校园创业分享会</div>
+                <div class="text-xs text-neutral-light flex items-center mt-1">
+                  <i class="fa fa-map-marker mr-1"></i> 创业中心
+                </div>
+              </div>
+            </li>
+            <li class="flex items-start card-hover">
+              <div class="w-12 h-12 bg-accent/10 rounded-lg flex flex-col items-center justify-center text-accent mr-3">
+                <div class="font-bold">02</div>
+                <div class="text-xs">六月</div>
+              </div>
+              <div>
+                <div class="font-medium text-sm">校园篮球赛</div>
+                <div class="text-xs text-neutral-light flex items-center mt-1">
+                  <i class="fa fa-map-marker mr-1"></i> 体育馆
+                </div>
+              </div>
+            </li>
+          </ul>
+          <button class="w-full btn-secondary text-sm mt-3 py-1">
+            查看全部活动
+          </button>
+        </div>
+        
+        <!-- 热门话题 -->
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h3 class="font-bold mb-3">热门话题</h3>
+          <ul class="space-y-2">
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <span class="text-primary">#</span>
+                <span class="ml-1">校园科技文化节</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <span class="text-primary">#</span>
+                <span class="ml-1">ACM程序设计大赛</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <span class="text-primary">#</span>
+                <span class="ml-1">校园篮球赛</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <span class="text-primary">#</span>
+                <span class="ml-1">期末复习</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center p-2 rounded-lg hover:bg-neutral-lighter transition-colors">
+                <span class="text-primary">#</span>
+                <span class="ml-1">校园招聘会</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- 在线好友 -->
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h3 class="font-bold mb-3">在线好友</h3>
+          <ul class="space-y-3">
+            <li class="flex items-center">
+              <div class="relative">
+                <img src="https://picsum.photos/id/237/40/40" alt="好友头像" class="w-8 h-8 rounded-full object-cover">
+                <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+              </div>
+              <span class="ml-3 font-medium text-sm">李明</span>
+            </li>
+            <li class="flex items-center">
+              <div class="relative">
+                <img src="https://picsum.photos/id/238/40/40" alt="好友头像" class="w-8 h-8 rounded-full object-cover">
+                <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+              </div>
+              <span class="ml-3 font-medium text-sm">张雪</span>
+            </li>
+            <li class="flex items-center">
+              <div class="relative">
+                <img src="https://picsum.photos/id/239/40/40" alt="好友头像" class="w-8 h-8 rounded-full object-cover">
+                <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+              </div>
+              <span class="ml-3 font-medium text-sm">王浩</span>
+            </li>
+            <li class="flex items-center">
+              <div class="relative">
+                <img src="https://picsum.photos/id/240/40/40" alt="好友头像" class="w-8 h-8 rounded-full object-cover">
+                <span class="absolute bottom-0 right-0 w-3 h-3 bg-gray-300 rounded-full border-2 border-white"></span>
+              </div>
+              <span class="ml-3 font-medium text-sm">赵静</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- 页脚 -->
+  <footer class="bg-white border-t mt-8">
+    <div class="container mx-auto px-4 py-6">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center mb-4 md:mb-0">
+          <i class="fa fa-graduation-cap text-2xl text-primary mr-2"></i>
+          <span class="font-bold text-xl">CampusHub</span>
+        </div>
+        <div class="flex space-x-6 mb-4 md:mb-0">
+          <a href="#" class="text-neutral-light hover:text-primary transition-colors">关于我们</a>
+          <a href="#" class="text-neutral-light hover:text-primary transition-colors">帮助中心</a>
+          <a href="#" class="text-neutral-light hover:text-primary transition-colors">隐私政策</a>
+          <a href="#" class="text-neutral-light hover:text-primary transition-colors">联系我们</a>
+        </div>
+        <div class="flex space-x-4">
+          <a href="#" class="text-neutral-light hover:text-primary transition-colors">
+            <i class="fa fa-weibo"></i>
+          </a>
+          <a href="#" class="text-neutral-light hover:text-primary transition-colors">
+            <i class="fa fa-wechat"></i>
+          </a>
+          <a href="#" class="text-neutral-light hover:text-primary transition-colors">
+            <i class="fa fa-qq"></i>
+          </a>
+        </div>
+      </div>
+      <div class="mt-6 text-center text-neutral-light text-sm">
+        © 2023 CampusHub 校园社区. 保留所有权利.
+      </div>
+    </div>
+  </footer>
+  
+  <script>
+    // 导航栏交互效果
+    document.addEventListener('DOMContentLoaded', function() {
+      // 为所有卡片添加悬停效果
+      const cards = document.querySelectorAll('.card-hover');
+      cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+          this.classList.add('shadow-lg');
         });
-    </script>
+        card.addEventListener('mouseleave', function() {
+          this.classList.remove('shadow-lg');
+        });
+      });
+      
+      // 为导航项添加点击效果
+      const navItems = document.querySelectorAll('.nav-item-hover');
+      navItems.forEach(item => {
+        item.addEventListener('click', function() {
+          // 移除所有活动状态
+          navItems.forEach(i => i.classList.remove('nav-item-active'));
+          // 添加活动状态到当前项
+          this.classList.add('nav-item-active');
+        });
+      });
+    });
+  </script>
 </body>
-
-</html>    
+</html>
+    
